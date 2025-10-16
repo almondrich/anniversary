@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pull the Light Bulb String</title>
+<style>
+  :root {
+    --string-height: 150px;
+    --bulb-width: 100px;
+    --bulb-height: 140px;
+    --bulb-margin-top: 20px;
+    --bulb-before-top: -25px;
+    --bulb-before-height: 25px;
+    --handle-size: 20px;
+    --handle-offset: calc(var(--handle-size) / -2);
+    --next-font: 2rem;
+    --hint-font: 0.9rem;
+    --hint-bottom: 40px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  /* MAIN SECTION */
+  .section {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, #222 40%, #000 100%);
+    flex-direction: column;
+    color: #fff;
+    position: relative;
+  }
+
+  /* STRING */
+  .string {
+    width: 3px;
+    height: var(--string-height);
+    background: #ccc;
+    position: relative;
+    cursor: grab;
+    transition: height 0.3s ease;
+  }
+
+  /* PULL HANDLE */
+  .handle {
+    width: var(--handle-size);
+    height: var(--handle-size);
+    background: #ddd;
+    border-radius: 50%;
+    position: absolute;
+    bottom: var(--handle-offset);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* BULB */
+  .bulb {
+    width: var(--bulb-width);
+    height: var(--bulb-height);
+    background: #444;
+    border-radius: 50% 50% 40% 40%;
+    position: relative;
+    margin-top: var(--bulb-margin-top);
+    box-shadow: 0 0 30px rgba(255, 255, 100, 0);
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  .bulb::before {
+    content: "";
+    position: absolute;
+    top: var(--bulb-before-top);
+    left: 25%;
+    width: 50%;
+    height: var(--bulb-before-height);
+    background: #999;
+    border-radius: 10px 10px 0 0;
+  }
+
+  /* WHEN BULB IS ON */
+  .bulb.on {
+    background: #fffecb;
+    box-shadow: 0 0 60px rgba(255, 255, 200, 0.8);
+  }
+
+  /* NEXT PAGE - Initially hidden */
+  .next {
+    height: 100vh;
+    background: #f5f5f5;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--next-font);
+    display: none; /* Hide by default */
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+
+  /* Show when revealed */
+  .next.revealed {
+    display: flex;
+  }
+
+  h1 {
+    margin-top: 20px;
+  }
+
+  .hint {
+    position: absolute;
+    bottom: var(--hint-bottom);
+    font-size: var(--hint-font);
+    opacity: 0.7;
+  }
+
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none; /* Hide initially */
+  }
+
+  button:hover {
+    background: #0056b3;
+  }
+
+  @media (max-width: 600px) {
+    :root {
+      --string-height: 100px;
+      --bulb-width: 70px;
+      --bulb-height: 98px;
+      --bulb-margin-top: 15px;
+      --bulb-before-top: -18px;
+      --bulb-before-height: 18px;
+      --handle-size: 15px;
+      --handle-offset: calc(var(--handle-size) / -2);
+      --next-font: 1.5rem;
+      --hint-font: 0.8rem;
+      --hint-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+
+    .hint {
+      bottom: 10px;
+    }
+
+    button {
+      font-size: 0.8rem;
+      padding: 5px 10px;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- FIRST PAGE -->
+  <div class="section" id="page1">
+    <div class="bulb" id="bulb"></div>
+    <div class="string" id="string">
+      <div class="handle"></div>
+    </div>
+    <h1>Pull the string ↓</h1>
+    <p class="hint">(Click and drag the string downward)</p>
+  </div>
+
+  <!-- SECOND PAGE - Initially hidden -->
+  <div class="next" id="page2">
+    <p id="msg1">💖💖💖 HAAPPYY FIRST ANNIVERSARY BAL KO 💖💖💖.</p>
+    <p id="msg2">Wishing you a day filled with love and joy!</p>
+    <p id="msg3">Here's to many more wonderful years together. I love you!</p>
+    <BR>
+<a target="_blank" class="fcc-btn" href="pic2.html">CLICK NEXT</a>
+  </div>
+
+  <!-- THIRD PAGE - Initially hidden -->
+
+
+<script>
+  const string = document.getElementById('string');
+  const bulb = document.getElementById('bulb');
+  const page2 = document.getElementById('page2');
+  const page3 = document.getElementById('page3');
+  const redirectBtn = document.getElementById('redirectBtn');
+
+  const initialHeight = parseInt(getComputedStyle(string).height);
+  const pullThreshold = initialHeight * 1.2; // Maintain proportional threshold
+
+  let startY = 0;
+  let isDragging = false;
+  let hasPulled = false; // Track if the string has been pulled
+
+  string.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startY = e.clientY;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      string.style.height = initialHeight + 'px'; // reset string height
+    }
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      let distance = e.clientY - startY;
+      if (distance > 0 && distance < 200) {
+        string.style.height = initialHeight + distance + 'px';
+      }
+      if (distance > pullThreshold && !hasPulled) {
+        bulb.classList.add('on');
+        hasPulled = true;
+        page2.classList.add('revealed'); // Show the second page
+        window.scrollTo({
+          top: window.innerHeight,
+          behavior: 'smooth'
+        });
+        isDragging = false;
+        setTimeout(() => {
+          string.style.height = initialHeight + 'px';
+        }, 500);
+        setTimeout(() => {
+          startTyping();
+        }, 1000); // Start typing after scroll
+      }
+    }
+  });
+
+  // Support for touch devices
+  string.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    startY = e.touches[0].clientY;
+  });
+
+  document.addEventListener('touchend', () => {
+    if (isDragging) {
+      isDragging = false;
+      string.style.height = initialHeight + 'px';
+    }
+  });
+
+  document.addEventListener('touchmove', (e) => {
+    if (isDragging) {
+      let distance = e.touches[0].clientY - startY;
+      if (distance > 0 && distance < 200) {
+        string.style.height = initialHeight + distance + 'px';
+      }
+      if (distance > pullThreshold && !hasPulled) {
+        bulb.classList.add('on');
+        hasPulled = true;
+        page2.classList.add('revealed'); // Show the second page
+        window.scrollTo({
+          top: window.innerHeight,
+          behavior: 'smooth'
+        });
+        isDragging = false;
+        setTimeout(() => {
+          string.style.height = initialHeight + 'px';
+        }, 500);
+        setTimeout(() => {
+          startTyping();
+        }, 1000); // Start typing after scroll
+      }
+    }
+  });
+
+  function startTyping() {
+    const messages = [
+      document.getElementById('msg1'),
+      document.getElementById('msg2'),
+      document.getElementById('msg3')
+    ];
+    const texts = messages.map(m => m.textContent);
+    messages.forEach(m => m.textContent = '');
+
+    let index = 0;
+
+    function typeNext() {
+      if (index >= messages.length) {
+        // Done typing, show the button
+        redirectBtn.style.display = 'block';
+        return;
+      }
+      typeWriter(messages[index], texts[index], 0, () => {
+        index++;
+        typeNext();
+      });
+    }
+
+    typeNext();
+  }
+
+  function typeWriter(element, text, i, callback) {
+    if (i < text.length) {
+      element.textContent += text.charAt(i);
+      setTimeout(() => {
+        typeWriter(element, text, i + 1, callback);
+      }, 50); // Adjust speed here (50ms per character)
+    } else {
+      if (callback) callback();
+    }
+  }
+
+  // Button to "redirect" (scroll) to page3
+  redirectBtn.addEventListener('click', () => {
+    page3.classList.add('revealed');
+    window.scrollTo({
+      top: window.innerHeight * 2,
+      behavior: 'smooth'
+    });
+  });
+</script>
+
+</body>
+</html>

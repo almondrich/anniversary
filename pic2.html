@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hanging Photo Stack with Messages</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: 
+      url('https://www.transparenttextures.com/patterns/paper-fibers.png'),
+      radial-gradient(circle at center, #f9f9f9 0%, #e7e6e1 100%);
+    background-blend-mode: multiply;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-size: cover;
+    background-attachment: fixed;
+    padding-bottom: 80px;
+  }
+
+  h1 {
+    margin-top: 40px;
+    color: #333;
+    text-align: center;
+    font-weight: 600;
+    font-size: 2rem;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.7);
+  }
+
+  .gallery {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 60px;
+    margin-top: 80px;
+    flex-wrap: wrap;
+    width: 90%;
+    max-width: 1000px;
+  }
+
+  .photo {
+    position: relative;
+    width: 180px;
+    height: 210px;
+    background: #fff;
+    border: 8px solid #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    overflow: hidden;
+    transform-origin: top center;
+    transition: transform 0.3s ease;
+  }
+
+  /* Hanging String */
+  .string {
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    width: 2px;
+    height: 80px;
+    background: #999;
+    transform: translateX(-50%);
+  }
+
+  /* Pin */
+  .pin {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    background: radial-gradient(circle, #d33 0%, #900 80%);
+    border-radius: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+  }
+
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  /* Caption Message */
+  .caption {
+    margin-top: 14px;
+    font-family: 'Courier New', cursive;
+    background: #fffef5;
+    border: 1px solid #ddd;
+    box-shadow: 2px 4px 6px rgba(0,0,0,0.1);
+    padding: 10px 12px;
+    width: 180px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.3;
+    transform: rotate(-1deg);
+    transition: all 0.3s ease;
+  }
+
+  .photo-container:hover .caption {
+    transform: rotate(1deg) scale(1.02);
+    background: #fffbe8;
+  }
+
+  /* Hover effects */
+  .photo:hover {
+    transform: rotate(4deg);
+  }
+  .photo:hover img {
+    transform: scale(1.05);
+  }
+
+  /* Slight natural tilt for variety */
+  .photo-container:nth-child(1) .photo { transform: rotate(-3deg); }
+  .photo-container:nth-child(2) .photo { transform: rotate(2deg); }
+  .photo-container:nth-child(3) .photo { transform: rotate(-2deg); }
+  .photo-container:nth-child(4) .photo { transform: rotate(1deg); }
+
+  /* Swing animation */
+  @keyframes swing {
+    0%   { transform: rotate(6deg); }
+    25%  { transform: rotate(-5deg); }
+    50%  { transform: rotate(4deg); }
+    75%  { transform: rotate(-3deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+  .photo.swing {
+    animation: swing 1.5s ease-out;
+  }
+</style>
+</head>
+<body>
+
+<h1>📷 Hanging Photo Memories</h1>
+
+<div class="gallery" id="gallery">
+  <div class="photo-container">
+    <div class="photo">
+      <div class="string"></div>
+      <div class="pin"></div>
+      <img src="D.JPG" alt="Photo 1">
+    </div>
+    <p class="caption">“The day we met — still feels like yesterday.”</p>
+  </div>
+
+  <div class="photo-container">
+    <div class="photo">
+      <div class="string"></div>
+      <div class="pin"></div>
+      <img src="1.jpg" alt="Photo 2">
+    </div>
+    <p class="caption">“Every laugh shared is a memory captured forever.”</p>
+  </div>
+
+  <div class="photo-container">
+    <div class="photo">
+      <div class="string"></div>
+      <div class="pin"></div>
+      <img src="dd.JPG" alt="Photo 3">
+    </div>
+    <p class="caption">“Some moments don’t need filters — just feelings.”</p>
+  </div>
+
+  <div class="photo-container">
+    <div class="photo">
+      <div class="string"></div>
+      <div class="pin"></div>
+      <img src="cc.jpg" alt="Photo 4">
+    </div>
+    <p class="caption">“Cherishing the sunsets and smiles that never fade.”</p>
+  </div>
+</div>
+
+<script>
+  // Add swing effect when clicking a photo
+  const photos = document.querySelectorAll('.photo');
+  photos.forEach(photo => {
+    photo.addEventListener('click', () => {
+      photo.classList.remove('swing');
+      void photo.offsetWidth; // restart animation
+      photo.classList.add('swing');
+    });
+  });
+</script>
+
+</body>
+</html>

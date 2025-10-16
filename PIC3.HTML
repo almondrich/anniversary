@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Puzzle of Us — Torn Paper Style</title>
+<style>
+  body{
+    margin:0;
+    font-family:sans-serif;
+    background:#f4efe8;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    min-height:100vh;
+  }
+  h1{
+    text-align:center;
+    margin:24px 0;
+    color:#333;
+  }
+  #board{
+    position:relative;
+    width:480px;
+    height:480px;
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  }
+  .piece{
+    position:absolute;
+    cursor:grab;
+    border-radius:6px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.15);
+    transition:transform .12s ease;
+    will-change:transform,left,top;
+    /* Torn paper effect */
+    clip-path: polygon(
+      5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%, 0% 5%
+    );
+    background-clip: content-box;
+    border: 2px solid rgba(255,255,255,0.6);
+  }
+  .piece.dragging{
+    cursor:grabbing;
+    transform:scale(1.02);
+    z-index:999;
+  }
+  .piece.correct{
+    box-shadow:0 6px 30px rgba(0,0,0,0.06);
+  }
+  .overlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,0.4);
+    z-index:4000;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s;
+  }
+  .overlay.show{
+    opacity:1;
+    pointer-events:all;
+  }
+  .congrats{
+    background:#fff;
+    padding:28px;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+    text-align:center;
+  }
+  .congrats h2{
+    margin:0 0 8px;
+    color:#222;
+  }
+  .congrats p{
+    color:#555;
+    margin-bottom:14px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Solve this puzzle to show the message</h1>
+
+<div id="board"></div>
+
+<div id="overlay" class="overlay">
+  <div class="congrats">
+    <h2>Congratulations!</h2>
+    <p id="finalMessage">Happy Anniversary — To many more memories together ❤️</p>
+    <a target="_blank" class="fcc-btn" href="bulb.html">CLICK NEXT</a>
+  </div>
+</div>
+
+<script>
+const board = document.getElementById('board');
+const overlay = document.getElementById('overlay');
+const finalMessage = document.getElementById('finalMessage');
+
+const IMG_SRC = '1.jpg'; // Replace with your photo
+const grid = 3;
+const pieceSize = board.clientWidth / grid;
+let solved = false;
+
+function createPieces(){
+  board.innerHTML = '';
+  const positions = [];
+  for(let r=0;r<grid;r++){
+    for(let c=0;c<grid;c++){
+      positions.push({r,c,index:r*grid+c});
+    }
+  }
+
+  positions.forEach(pos=>{
+    const el = document.createElement('div');
+    el.className='piece';
+    el.style.width=pieceSize+'px';
+    el.style.height=pieceSize+'px';
+    el.dataset.correctIndex = pos.index;
+    // background position
+    el.style.backgroundImage=`url('${IMG_SRC}')`;
+    el.style.backgroundSize = `${grid*100}% ${grid*100}%`;
+    el.style.backgroundPosition = `${(pos.c/(grid-1))*100}% ${(pos.r/(grid-1))*100}%`;
+    // random initial position
+    el.style.left = Math.random()*(board.clientWidth-pieceSize)+'px';
+    el.style.top = Math.random()*(board.clientHeight-pieceSize)+'px';
+    el.dataset.currentIndex = -1;
+    board.appendChild(el);
+    setupPointer(el);
+  });
+}
+
+function setupPointer(el){
+  let offsetX=0, offsetY=0, dragging=false;
+
+  el.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    dragging=true;
+    el.setPointerCapture(e.pointerId);
+    el.classList.add('dragging');
+    const rect = el.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    el.style.zIndex = 1000;
+  });
+
+  document.addEventListener('pointermove',e=>{
+    if(!dragging) return;
+    const px = e.clientX - offsetX - board.getBoundingClientRect().left;
+    const py = e.clientY - offsetY - board.getBoundingClientRect().top;
+    el.style.left = Math.max(0,Math.min(board.clientWidth-pieceSize,px))+'px';
+    el.style.top = Math.max(0,Math.min(board.clientHeight-pieceSize,py))+'px';
+  });
+
+  document.addEventListener('pointerup',e=>{
+    if(!dragging) return;
+    dragging=false;
+    el.classList.remove('dragging');
+    try{el.releasePointerCapture(e.pointerId);}catch(err){}
+    snapPiece(el);
+    checkSolved();
+  });
+}
+
+function snapPiece(el){
+  const left=parseFloat(el.style.left||0);
+  const top=parseFloat(el.style.top||0);
+  const col=Math.round(left/pieceSize);
+  const row=Math.round(top/pieceSize);
+  const cellX=col*pieceSize;
+  const cellY=row*pieceSize;
+  const dx=left-cellX, dy=top-cellY;
+  const dist=Math.hypot(dx,dy);
+  const SNAP=pieceSize*0.35;
+  if(dist<=SNAP){
+    el.style.left=cellX+'px';
+    el.style.top=cellY+'px';
+    el.dataset.currentIndex=row*grid+col;
+    if(parseInt(el.dataset.currentIndex)===parseInt(el.dataset.correctIndex)){
+      el.classList.add('correct');
+    } else {
+      el.classList.remove('correct');
+    }
+  } else {
+    el.dataset.currentIndex=-1;
+    el.classList.remove('correct');
+  }
+}
+
+function checkSolved(){
+  const pieces = Array.from(document.querySelectorAll('.piece'));
+  const allCorrect = pieces.every(p=>parseInt(p.dataset.currentIndex)===parseInt(p.dataset.correctIndex));
+  if(allCorrect && !solved){
+    solved=true;
+    overlay.classList.add('show');
+  }
+}
+
+window.addEventListener('load',()=>{createPieces();});
+</script>
+
+</body>
+</html>

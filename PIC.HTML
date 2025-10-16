@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crumpled Paper Photo Stack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #f8f5f2;
+            color: #5a4c3e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23e8e0d9' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #7a6a5a;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            font-weight: normal;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+            font-style: italic;
+        }
+        
+        .photo-stack {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+        
+        .photo-item {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            perspective: 1000px;
+        }
+        
+        .string {
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(180,180,180,0.7), rgba(150,150,150,0.9));
+            z-index: 10;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .string:hover {
+            transform: translateX(-50%) scaleX(1.5);
+        }
+        
+        .photo-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+            cursor: pointer;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
+        }
+        
+        .photo-item:hover .photo-frame {
+            transform: rotateY(5deg) rotateX(3deg) translateY(-5px);
+        }
+        
+        .paper-texture {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #fefcf9;
+            border-radius: 2px;
+            box-shadow: 
+                inset 0 0 30px rgba(0,0,0,0.05),
+                0 5px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .paper-texture::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0,0,0,0.03) 1px, transparent 1px),
+                radial-gradient(circle at 80% 70%, rgba(0,0,0,0.03) 1px, transparent 1px),
+                radial-gradient(circle at 40% 60%, rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-size: 50px 50px, 60px 60px, 70px 70px;
+            background-position: 0 0, 10px 10px, 20px 20px;
+            opacity: 0.6;
+        }
+        
+        .crumple-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(0,0,0,0.03) 10%, transparent 20%),
+                radial-gradient(circle at 70% 80%, rgba(0,0,0,0.03) 10%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(0,0,0,0.02) 15%, transparent 25%);
+            pointer-events: none;
+        }
+        
+        .photo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: calc(100% - 40px);
+            height: calc(100% - 40px);
+            object-fit: cover;
+            border-radius: 1px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .photo-item:hover .photo {
+            transform: scale(1.01);
+        }
+        
+        .photo-caption {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            font-style: italic;
+        }
+        
+        .instructions {
+            margin-top: 4rem;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 1.5rem;
+            border-radius: 5px;
+            max-width: 800px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .instructions h2 {
+            margin-bottom: 1rem;
+            color: #7a6a5a;
+            font-weight: normal;
+        }
+        
+        .instructions p {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+        
+        .add-photo-btn {
+            margin-top: 2rem;
+            padding: 12px 30px;
+            background: #f0e9e2;
+            border: 1px solid #d4c9bc;
+            color: #7a6a5a;
+            font-size: 1.1rem;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .add-photo-btn:hover {
+            background: #e8dfd6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+        
+        @media (max-width: 768px) {
+            .photo-stack {
+                gap: 5rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Crumpled Paper Gallery</h1>
+        <p class="subtitle">Memories suspended by delicate strings</p>
+        
+        <div class="photo-stack">
+            <!-- Photo 1 -->
+            <div class="photo-item">
+                <div class="string"></div>
+                <div class="photo-frame">
+                    <div class="paper-texture">
+                        <div class="crumple-effect"></div>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="Mountain Landscape" class="photo">
+                </div>
+                <div class="photo-caption">Mountain Escape</div>
+            </div>
+            
+            <!-- Photo 2 -->
+            <div class="photo-item">
+                <div class="string"></div>
+                <div class="photo-frame">
+                    <div class="paper-texture">
+                        <div class="crumple-effect"></div>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05" alt="Forest" class="photo">
+                </div>
+                <div class="photo-caption">Forest Path</div>
+            </div>
+            
+            <!-- Photo 3 -->
+            <div class="photo-item">
+                <div class="string"></div>
+                <div class="photo-frame">
+                    <div class="paper-texture">
+                        <div class="crumple-effect"></div>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000" alt="Lake" class="photo">
+                </div>
+                <div class="photo-caption">Serene Lake</div>
+            </div>
+        </div>
+        
+        <button class="add-photo-btn">Add Your Photo</button>
+        
+        <div class="instructions">
+            <h2>How to Add Your Photos</h2>
+            <p>1. Replace the image URLs in the HTML code with your own image URLs</p>
+            <p>2. Update the alt text and captions for accessibility</p>
+            <p>3. For best results, use images with a 3:4 aspect ratio (like 300x400px)</p>
+            <p>4. You can add more photo items by copying the structure of existing ones</p>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive effects to strings
+        document.querySelectorAll('.string').forEach(string => {
+            string.addEventListener('click', function() {
+                this.style.animation = 'swing 1s ease-in-out';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 1000);
+            });
+        });
+        
+        // Add swing animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes swing {
+                0% { transform: translateX(-50%) rotate(0deg); }
+                25% { transform: translateX(-50%) rotate(5deg); }
+                50% { transform: translateX(-50%) rotate(-5deg); }
+                75% { transform: translateX(-50%) rotate(3deg); }
+                100% { transform: translateX(-50%) rotate(0deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Button functionality
+        document.querySelector('.add-photo-btn').addEventListener('click', function() {
+            alert('To add your photo:\n\n1. Replace the image URL in the HTML code\n2. Update the caption text\n3. For best results, use images with 3:4 aspect ratio');
+        });
+    </script>
+</body>
+</html>

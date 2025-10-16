@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our 1st Anniversary</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            animation: fadeIn 1.5s ease-out;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            color: #e75480;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: slideIn 1s ease-out;
+        }
+        
+        .subtitle {
+            color: #777;
+            font-size: 1.2rem;
+            font-style: italic;
+            animation: slideIn 1.2s ease-out;
+        }
+        
+        .anniversary-badge {
+            background: linear-gradient(45deg, #e75480, #ff9a9e);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 15px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(231, 84, 128, 0.3);
+        }
+        
+        .video-container {
+            max-width: 480px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+            background-color: #000;
+            aspect-ratio: 2/3;
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+        
+        .video-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .video-container:hover .video-controls {
+            opacity: 1;
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .control-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+        
+        .message {
+            background-color: #fff5f7;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #e75480;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .message::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #e75480, #ff9a9e, #fad0c4);
+        }
+        
+        .message p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .heart {
+            color: #e75480;
+            font-size: 1.5rem;
+            margin: 0 5px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            color: rgba(231, 84, 128, 0.3);
+            font-size: 1.5rem;
+            animation: float 8s linear infinite;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #888;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .memory-counter {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .memory-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            min-width: 70px;
+        }
+        
+        .memory-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #e75480;
+        }
+        
+        .memory-label {
+            font-size: 0.8rem;
+            color: #777;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .message p {
+                font-size: 1rem;
+            }
+            
+            .memory-counter {
+                gap: 10px;
+            }
+            
+            .memory-item {
+                min-width: 60px;
+                padding: 8px 12px;
+            }
+            
+            .memory-number {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .video-container {
+                border-radius: 10px;
+            }
+            
+            video {
+                border-radius: 10px;
+            }
+            
+            .message {
+                padding: 15px;
+            }
+            
+            .memory-item {
+                min-width: 50px;
+                padding: 5px 8px;
+            }
+            
+            .memory-number {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="floating-hearts" id="hearts-container"></div>
+        
+        <div class="header">
+            <h1>Happy 1st Anniversary!</h1>
+            <p class="subtitle">One year of beautiful memories together</p>
+            <div class="anniversary-badge">
+                <i class="fas fa-heart"></i> 1 Year Together <i class="fas fa-heart"></i>
+            </div>
+        </div>
+        
+        <div class="video-container">
+            <video id="anniversaryVideo" autoplay loop controls>
+                <source src="bal.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="video-controls">
+                <button class="control-btn" id="playBtn">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <button class="control-btn" id="volumeBtn">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="memory-counter">
+            <div class="memory-item">
+                <div class="memory-number">365</div>
+                <div class="memory-label">Days</div>
+            </div>
+            <div class="memory-item">
+                <div class="memory-number">12</div>
+                <div class="memory-label">Months</div>
+            </div>
+            <div class="memory-item">
+                <div class="memory-number">52</div>
+                <div class="memory-label">Weeks</div>
+            </div>
+            <div class="memory-item">
+                <div class="memory-number">1</div>
+                <div class="memory-label">Year</div>
+            </div>
+        </div>
+        
+        <div class="message">
+            <p>One year ago, we began this beautiful journey together. Every moment with you has been a treasure I hold close to my heart.</p>
+            <p>Through all the seasons, through all the days, my love for you only grows stronger.</p>
+            <p>Here's to our first year and to many more beautiful years together <span class="heart">♥</span></p>
+        </div>
+        
+        <div class="footer">
+            <p>Made with love for our 1st anniversary</p>
+        </div>
+    </div>
+
+    <script>
+        // Video controls
+        const video = document.getElementById('anniversaryVideo');
+        const playBtn = document.getElementById('playBtn');
+        const volumeBtn = document.getElementById('volumeBtn');
+        
+        // Video will autoplay with sound
+        video.muted = false;
+        
+        playBtn.addEventListener('click', () => {
+            if (video.paused) {
+                video.play();
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                video.pause();
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        });
+        
+        volumeBtn.addEventListener('click', () => {
+            if (video.muted) {
+                video.muted = false;
+                volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            } else {
+                video.muted = true;
+                volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+        });
+        
+        // Create floating hearts
+        const heartsContainer = document.getElementById('hearts-container');
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('floating-heart');
+            heart.innerHTML = '♥';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            heartsContainer.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 8000);
+        }
+        
+        // Create hearts periodically
+        setInterval(createHeart, 500);
+        
+        // Add some initial hearts
+        for (let i = 0; i < 15; i++) {
+            setTimeout(createHeart, i * 300);
+        }
+    </script>
+</body>
+</html>

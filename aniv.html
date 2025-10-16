@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balloons for My Love 💖</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #fde6ec 0%, #f9c5d1 100%);
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  /* Container for text */
+  .message-container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 600px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    z-index: 5;
+  }
+
+  h1 {
+    color: #d15d7b;
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  #message {
+    font-family: "Courier New", monospace;
+    color: #444;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    border-right: 3px solid #d15d7b;
+    animation: blink 0.8s infinite;
+    display: inline-block;
+  }
+
+  @keyframes blink {
+    0%, 100% { border-color: transparent; }
+    50% { border-color: #d15d7b; }
+  }
+
+  #replayBtn {
+    display: none;
+    margin-top: 20px;
+    background: #d15d7b;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  #replayBtn:hover {
+    background: #b24b68;
+    transform: scale(1.05);
+  }
+
+  /* Balloons */
+  .balloon {
+    position: absolute;
+    bottom: -150px;
+    width: 60px;
+    height: 80px;
+    border-radius: 50%;
+    background: red;
+    box-shadow: inset -5px -10px rgba(0,0,0,0.1);
+    animation: float 8s ease-in infinite;
+    opacity: 0.9;
+  }
+
+  .balloon::before {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 60px;
+    background: #666;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-110vh) scale(1.1);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="message-container">
+  <h1>💌 TO MY ONLY BAL 💌</h1>
+  <div id="message"></div>
+  <button id="replayBtn">Replay</button>
+</div>
+
+<audio id="bgMusic" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_845f050c9f.mp3?filename=romantic-piano-loop-112191.mp3" loop></audio>
+
+<script>
+  const text = `
+Happy Anniversary, my love ❤️
+
+Every moment with you is a celebration of love,
+laughter, and shared dreams.
+
+You lift me up, just like these balloons,
+and fill my life with color, joy, and peace.
+
+Forever yours — always. 💞
+`;
+
+  const messageEl = document.getElementById("message");
+  const replayBtn = document.getElementById("replayBtn");
+  const music = document.getElementById("bgMusic");
+  let index = 0;
+
+  // Typewriter effect
+  function typeMessage() {
+    if (index < text.length) {
+      messageEl.textContent += text.charAt(index);
+      index++;
+      setTimeout(typeMessage, 60);
+    } else {
+      replayBtn.style.display = "block";
+    }
+  }
+
+  // Replay button
+  replayBtn.addEventListener("click", () => {
+    index = 0;
+    messageEl.textContent = "";
+    replayBtn.style.display = "none";
+    createBalloons(); // Restart balloons too
+    typeMessage();
+  });
+
+  // Balloons generator
+  function createBalloons() {
+    setInterval(() => {
+      const balloon = document.createElement("div");
+      balloon.classList.add("balloon");
+
+      const colors = ["#ff6b6b", "#f7b801", "#f18701", "#9b5de5", "#00bbf9", "#00f5d4"];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      balloon.style.background = color;
+      balloon.style.left = Math.random() * 100 + "vw";
+      balloon.style.animationDuration = 6 + Math.random() * 4 + "s";
+      balloon.style.transform = `scale(${0.8 + Math.random() * 0.4})`;
+
+      document.body.appendChild(balloon);
+
+      setTimeout(() => {
+        balloon.remove();
+      }, 9000);
+    }, 700);
+  }
+
+  // Initialize on page load
+  window.onload = () => {
+    music.volume = 0.3;
+    music.play();
+    createBalloons();
+    typeMessage();
+  };
+</script>
+
+</body>
+</html>
