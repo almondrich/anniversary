@@ -46,13 +46,14 @@
     color: #444;
     font-size: 1rem;
     line-height: 1.6;
-    white-space: pre-wrap;
+    white-space: pre-line;
     border-right: 3px solid #d15d7b;
     animation: blink 0.8s infinite;
     display: inline-block;
     text-align: left;
     max-width: 100%;
     overflow-wrap: break-word;
+    min-height: 300px;
   }
 
   @keyframes blink {
@@ -152,6 +153,7 @@
     #message {
       font-size: 0.95rem;
       line-height: 1.5;
+      min-height: 250px;
     }
     
     .balloon {
@@ -182,6 +184,7 @@
     #message {
       font-size: 0.9rem;
       line-height: 1.4;
+      min-height: 200px;
     }
     
     #replayBtn {
@@ -218,6 +221,7 @@
     
     #message {
       font-size: 0.85rem;
+      min-height: 180px;
     }
     
     .message-container {
@@ -245,7 +249,7 @@
   const text = `Happy Anniversary, Bal ko! ❤️
 
 Thank you ti am-amin nga sakripisyom bal, ti panagayat mo kanyak, ken ti panangipateg mo kanyak.
-Agyamanak unay ta adda ka iti biag ko. thank you ti amin nga ragsak ken parabor nga inted mo kanyak.
+Agyamanak unay ta adda ka iti biag ko. Thank you ti amin nga ragsak ken parabor nga inted mo kanyak.
 Sorry ta saan ko a naipakita amin ti panagayat ko kanyam ngem uray kasta, ay-ayaten ka unay.
 Napalanggaak unay nga adda ka iti biag ko. Sika ti rason ti panagbiag ko ken ti rason ti panagragsak ko.
 Sapay la kuma ta agtultuloy ti panagayat ta ti maysan maysa.
@@ -260,6 +264,7 @@ Forever yours — always. 💞
   const musicToggle = document.getElementById("musicToggle");
   let index = 0;
   let isMusicPlaying = true;
+  let balloonInterval;
 
   // Typewriter effect
   function typeMessage() {
@@ -268,7 +273,7 @@ Forever yours — always. 💞
       index++;
       setTimeout(typeMessage, 60);
     } else {
-      replayBtn.style.display = "block";
+      replayBtn.style.display = "inline-block";
     }
   }
 
@@ -278,7 +283,7 @@ Forever yours — always. 💞
     messageEl.textContent = "";
     replayBtn.style.display = "none";
     clearBalloons();
-    createBalloons(); // Restart balloons too
+    balloonInterval = createBalloons();
     typeMessage();
   });
 
@@ -299,7 +304,7 @@ Forever yours — always. 💞
     // Adjust balloon frequency based on screen size
     const frequency = window.innerWidth < 768 ? 1000 : 700;
     
-    const balloonInterval = setInterval(() => {
+    return setInterval(() => {
       const balloon = document.createElement("div");
       balloon.classList.add("balloon");
 
@@ -323,8 +328,6 @@ Forever yours — always. 💞
         }
       }, 9000);
     }, frequency);
-    
-    return balloonInterval;
   }
 
   // Clear all balloons
@@ -333,13 +336,16 @@ Forever yours — always. 💞
     balloons.forEach(balloon => {
       balloon.remove();
     });
+    if (balloonInterval) {
+      clearInterval(balloonInterval);
+    }
   }
 
   // Initialize on page load
   window.onload = () => {
     music.volume = 0.3;
     music.play();
-    createBalloons();
+    balloonInterval = createBalloons();
     typeMessage();
   };
 
