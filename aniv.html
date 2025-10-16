@@ -118,16 +118,92 @@
 
 <script>
   const text = `
-Happy Anniversary, my love ❤️
+Happy Anniversary, Bal ko! ❤️
 
-Every moment with you is a celebration of love,
-laughter, and shared dreams.
-
-You lift me up, just like these balloons,
-and fill my life with color, joy, and peace.
-
+Thank you ti am-amin nga sakripisyom bal, ti panagayat mo kanyak, ken ti panangipateg mo kanyak.
+Agyamanak unay ta adda ka iti biag ko. thank you ti amin nga ragsak ken parabor nga inted mo kanyak.
+Sorry ta saan ko a naipakita amin ti panagayat ko kanyam ngem uray kasta, ay-ayaten ka unay.
+Napalanggaak unay nga adda ka iti biag ko. Sika ti rason ti panagbiag ko ken ti rason ti panagragsak ko.
+Sapay la kuma ta agtultuloy ti panagayat ta ti maysan maysa.
+Ken amin nga arapaap ta nga duwa ket matungpal ta nga agkadwa ta ti palubos ti Apo.
+Sorry nu kasjay nga agkara apa ta, adu man dagiti naybagbagak nga madik maybabawin, ngem sapay la koma ta agtultuloy ti panagayat ta. 
 Forever yours — always. 💞
 `;
+
+  // Inject responsive styles so the message container is readable and scrollable on small screens,
+  // and make balloons smaller on mobile.
+  (function addResponsiveStyles() {
+    const style = document.createElement("style");
+    style.textContent = `
+/* Ensure message container can scroll on small screens and text wraps */
+.message-container {
+  max-width: 90vw;
+  box-sizing: border-box;
+  z-index: 10;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Make sure the message text itself is readable and can wrap */
+#message {
+  display: block;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* Smaller layout tweaks for narrow viewports */
+@media (max-width: 600px) {
+  .message-container {
+    padding: 18px;
+    border-radius: 12px;
+    margin: 6vh auto;
+    font-size: 0.95rem;
+    max-height: 68vh;
+  }
+  h1 { font-size: 1.2rem; }
+  #message { font-size: 0.95rem; border-right-width: 2px; }
+  .balloon { width: 44px; height: 58px; }
+}
+
+@media (max-width: 420px) {
+  .message-container {
+    padding: 14px;
+    font-size: 0.9rem;
+    max-height: 72vh;
+  }
+  h1 { font-size: 1.05rem; }
+  #message { font-size: 0.9rem; }
+  .balloon { width: 36px; height: 48px; }
+}
+
+/* Keep balloons beneath the message container */
+.balloon { z-index: 2; pointer-events: none; }
+.message-container { z-index: 20; }
+`;
+    document.head.appendChild(style);
+  })();
+
+  // Auto-scroll the message container as the typewriter adds text so mobile users can read everything.
+  (function enableAutoScrollDuringTyping() {
+    const container = document.querySelector(".message-container");
+    const messageNode = document.getElementById("message");
+    if (!container || !messageNode) return;
+
+    const observer = new MutationObserver(() => {
+      // keep the most recent text visible while typing
+      container.scrollTop = container.scrollHeight;
+    });
+    observer.observe(messageNode, { characterData: true, subtree: true, childList: true });
+  })();
+
+  // Provide a small helper so the balloon generator (defined later) can scale durations/sizes for small screens.
+  window.__responsiveBalloonConfig = (function () {
+    const w = window.innerWidth || document.documentElement.clientWidth;
+    if (w <= 420) return { baseWidth: 36, baseHeight: 48, minDuration: 4, extraDuration: 2, interval: 800 };
+    if (w <= 600) return { baseWidth: 44, baseHeight: 58, minDuration: 5, extraDuration: 3, interval: 750 };
+    return { baseWidth: 60, baseHeight: 80, minDuration: 6, extraDuration: 4, interval: 700 };
+  })();
+</script>
 
   const messageEl = document.getElementById("message");
   const replayBtn = document.getElementById("replayBtn");
