@@ -17,7 +17,7 @@ body {
   box-sizing: border-box;
   min-height: 100vh;
   overflow-x: hidden;
-  overflow-y: auto; /* ✅ allows scrolling */
+  overflow-y: auto; /* ✅ allows full page scroll */
 }
 
   /* Container for text */
@@ -32,8 +32,7 @@ body {
   box-shadow: 0 8px 30px rgba(0,0,0,0.2);
   z-index: 5;
   margin: 20px 0;
-  overflow-y: auto; /* ✅ allows message scroll if text is too long */
-  max-height: 80vh; /* ✅ prevents balloon overlap */
+  /* ✅ remove max-height and overflow-y */
 }
 
 
@@ -394,4 +393,5 @@ Forever yours — always. 💞
 
 </body>
 </html>
+
 
