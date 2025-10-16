@@ -5,48 +5,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Balloons for My Love 💖</title>
 <style>
-body {
-  margin: 0;
-  padding: 20px;
-  background: radial-gradient(circle at center, #fde6ec 0%, #f9c5d1 100%);
-  font-family: "Poppins", sans-serif;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  box-sizing: border-box;
-  min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto; /* ✅ allows full page scroll */
-}
+  body {
+    margin: 0;
+    padding: 20px;
+    background: radial-gradient(circle at center, #fde6ec 0%, #f9c5d1 100%);
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto; /* ✅ allows full-page scrolling */
+  }
 
   /* Container for text */
-.message-container {
-  position: relative;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 30px 25px;
-  border-radius: 20px;
-  text-align: center;
-  max-width: 600px;
-  width: 100%;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-  z-index: 5;
-  margin: 20px 0;
-  /* ✅ remove max-height and overflow-y */
-}
-
+  .message-container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px 25px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    z-index: 5;
+    margin: 40px 0;
+  }
 
   h1 {
     color: #d15d7b;
     font-size: 1.8rem;
     margin-bottom: 15px;
     line-height: 1.3;
-    position: sticky;
-    top: 0;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px;
-    border-radius: 10px;
-    z-index: 6;
   }
 
   #message {
@@ -61,7 +52,7 @@ body {
     text-align: left;
     max-width: 100%;
     overflow-wrap: break-word;
-    padding: 10px 0;
+    min-height: 300px;
   }
 
   @keyframes blink {
@@ -82,10 +73,6 @@ body {
     transition: all 0.3s;
     width: 100%;
     max-width: 200px;
-    position: sticky;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
-    z-index: 6;
   }
 
   #replayBtn:hover {
@@ -95,7 +82,7 @@ body {
 
   /* Balloons */
   .balloon {
-    position: absolute;
+    position: fixed; /* ✅ fixed instead of absolute so they float over the whole page */
     bottom: -150px;
     width: 40px;
     height: 60px;
@@ -151,31 +138,11 @@ body {
     color: #d15d7b;
   }
 
-  /* Custom scrollbar */
-  .message-container::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  .message-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-  }
-
-  .message-container::-webkit-scrollbar-thumb {
-    background: #d15d7b;
-    border-radius: 10px;
-  }
-
-  .message-container::-webkit-scrollbar-thumb:hover {
-    background: #b24b68;
-  }
-
   /* Mobile-specific styles */
   @media (max-width: 768px) {
     .message-container {
       padding: 25px 20px;
-      margin: 15px 0;
-      max-height: 65vh;
+      margin: 20px 0;
     }
     
     h1 {
@@ -185,6 +152,7 @@ body {
     #message {
       font-size: 0.95rem;
       line-height: 1.5;
+      min-height: 250px;
     }
     
     .balloon {
@@ -206,7 +174,6 @@ body {
     .message-container {
       padding: 20px 15px;
       border-radius: 15px;
-      max-height: 60vh;
     }
     
     h1 {
@@ -216,6 +183,7 @@ body {
     #message {
       font-size: 0.9rem;
       line-height: 1.4;
+      min-height: 200px;
     }
     
     #replayBtn {
@@ -242,21 +210,6 @@ body {
     
     .music-controls i {
       font-size: 1.3rem;
-    }
-  }
-
-  @media (max-width: 360px) {
-    h1 {
-      font-size: 1.3rem;
-    }
-    
-    #message {
-      font-size: 0.85rem;
-    }
-    
-    .message-container {
-      padding: 18px 12px;
-      max-height: 55vh;
     }
   }
 </style>
@@ -302,9 +255,10 @@ Forever yours — always. 💞
     if (index < text.length) {
       messageEl.textContent += text.charAt(index);
       index++;
+      window.scrollTo(0, document.body.scrollHeight); // ✅ auto-scroll as text grows
       setTimeout(typeMessage, 60);
     } else {
-      replayBtn.style.display = 'inline-block';
+      replayBtn.style.display = "inline-block";
     }
   }
 
@@ -332,7 +286,6 @@ Forever yours — always. 💞
 
   // Balloons generator
   function createBalloons() {
-    // Adjust balloon frequency based on screen size
     const frequency = window.innerWidth < 768 ? 1000 : 700;
     
     return setInterval(() => {
@@ -345,7 +298,6 @@ Forever yours — always. 💞
       balloon.style.left = Math.random() * 100 + "vw";
       balloon.style.animationDuration = 6 + Math.random() * 4 + "s";
       
-      // Adjust balloon size for mobile
       const scale = window.innerWidth < 768 ? 
         (0.7 + Math.random() * 0.3) : 
         (0.8 + Math.random() * 0.4);
@@ -361,37 +313,20 @@ Forever yours — always. 💞
     }, frequency);
   }
 
-  // Clear all balloons
+  // Clear balloons
   function clearBalloons() {
-    const balloons = document.querySelectorAll('.balloon');
-    balloons.forEach(balloon => {
-      balloon.remove();
-    });
-    if (balloonInterval) {
-      clearInterval(balloonInterval);
-    }
+    document.querySelectorAll('.balloon').forEach(b => b.remove());
+    if (balloonInterval) clearInterval(balloonInterval);
   }
 
-  // Initialize on page load
+  // Initialize
   window.onload = () => {
     music.volume = 0.3;
     music.play();
     balloonInterval = createBalloons();
     typeMessage();
   };
-
-  // Handle window resize
-  window.addEventListener('resize', function() {
-    // Adjust layout for different screen sizes
-    if (window.innerWidth < 768) {
-      document.body.style.padding = "15px";
-    } else {
-      document.body.style.padding = "20px";
-    }
-  });
 </script>
 
 </body>
 </html>
-
-
