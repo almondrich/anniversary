@@ -16,10 +16,9 @@
     box-sizing: border-box;
     min-height: 100vh;
     overflow-x: hidden;
-    overflow-y: auto; /* ✅ allows full-page scrolling */
+    overflow-y: auto;
   }
 
-  /* Container for text */
   .message-container {
     position: relative;
     background: rgba(255, 255, 255, 0.95);
@@ -43,7 +42,7 @@
   #message {
     font-family: "Courier New", monospace;
     color: #333;
-    font-size: 1.2rem; /* ✅ larger and easier to read */
+    font-size: 1.2rem;
     line-height: 1.8;
     white-space: pre-line;
     border-right: 3px solid #d15d7b;
@@ -60,7 +59,7 @@
     50% { border-color: #d15d7b; }
   }
 
-  #replayBtn {
+  #replayBtn, .fcc-btn {
     display: none;
     margin-top: 25px;
     background: #d15d7b;
@@ -73,14 +72,14 @@
     transition: all 0.3s;
     width: 100%;
     max-width: 220px;
+    text-decoration: none;
   }
 
-  #replayBtn:hover {
+  #replayBtn:hover, .fcc-btn:hover {
     background: #b24b68;
     transform: scale(1.05);
   }
 
-  /* Balloons */
   .balloon {
     position: fixed;
     bottom: -150px;
@@ -106,17 +105,10 @@
   }
 
   @keyframes float {
-    0% {
-      transform: translateY(0) scale(1);
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(-110vh) scale(1.1);
-      opacity: 0;
-    }
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-110vh) scale(1.1); opacity: 0; }
   }
 
-  /* Music controls */
   .music-controls {
     position: fixed;
     bottom: 20px;
@@ -137,71 +129,6 @@
     font-size: 1.6rem;
     color: #d15d7b;
   }
-
-  /* Mobile-specific styles */
-  @media (max-width: 768px) {
-    .message-container {
-      padding: 30px 25px;
-      margin: 25px 0;
-    }
-    
-    h1 {
-      font-size: 1.8rem;
-    }
-    
-    #message {
-      font-size: 1.05rem; /* ✅ larger on mobile too */
-      line-height: 1.7;
-      min-height: 250px;
-    }
-    
-    .balloon {
-      width: 35px;
-      height: 50px;
-    }
-    
-    .balloon::before {
-      height: 40px;
-      top: 50px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    body {
-      padding: 15px;
-    }
-    
-    .message-container {
-      padding: 25px 18px;
-      border-radius: 15px;
-    }
-    
-    h1 {
-      font-size: 1.6rem;
-    }
-    
-    #message {
-      font-size: 1rem;
-      line-height: 1.6;
-      min-height: 200px;
-    }
-    
-    #replayBtn {
-      padding: 10px 20px;
-      font-size: 1rem;
-    }
-    
-    .music-controls {
-      width: 50px;
-      height: 50px;
-      bottom: 15px;
-      right: 15px;
-    }
-    
-    .music-controls i {
-      font-size: 1.4rem;
-    }
-  }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -211,6 +138,7 @@
   <h1>💌 TO MY ONLY BAL 💌</h1>
   <div id="message"></div>
   <button id="replayBtn">Replay</button>
+  <a target="_blank" class="fcc-btn" id="nextBtn" href="PIC3.html">CLICK NEXT</a>
 </div>
 
 <div class="music-controls" id="musicToggle">
@@ -228,41 +156,39 @@ Napalanggaak unay nga adda ka iti biag ko. Sika ti rason ti panagbiag ko ken ti 
 Ken amin nga arapaap ta nga duwa ket matungpal ta nga agkadwa ta ti palubos ti Apo.
 Sorry nu kasjay nga agkara apa ta, adu man dagiti naybagbagak nga madik maybabawin, ngem sapay la koma ta agtultuloy ti panagayat ta. 
 Forever yours — always. 💞
-
 `;
-  <a target="_blank" class="fcc-btn" href="PIC3.html">CLICK NEXT</a>
 
   const messageEl = document.getElementById("message");
   const replayBtn = document.getElementById("replayBtn");
+  const nextBtn = document.getElementById("nextBtn");
   const music = document.getElementById("bgMusic");
   const musicToggle = document.getElementById("musicToggle");
   let index = 0;
   let isMusicPlaying = true;
   let balloonInterval;
 
-  // Typewriter effect
   function typeMessage() {
     if (index < text.length) {
       messageEl.textContent += text.charAt(index);
       index++;
-      window.scrollTo(0, document.body.scrollHeight); // ✅ auto-scroll down as it types
+      window.scrollTo(0, document.body.scrollHeight);
       setTimeout(typeMessage, 55);
     } else {
       replayBtn.style.display = "inline-block";
+      nextBtn.style.display = "inline-block"; // ✅ show next button after typing
     }
   }
 
-  // Replay button
   replayBtn.addEventListener("click", () => {
     index = 0;
     messageEl.textContent = "";
     replayBtn.style.display = "none";
+    nextBtn.style.display = "none";
     clearBalloons();
     balloonInterval = createBalloons();
     typeMessage();
   });
 
-  // Music toggle
   musicToggle.addEventListener("click", () => {
     if (isMusicPlaying) {
       music.pause();
@@ -274,7 +200,6 @@ Forever yours — always. 💞
     isMusicPlaying = !isMusicPlaying;
   });
 
-  // Balloons generator
   function createBalloons() {
     const frequency = window.innerWidth < 768 ? 1000 : 700;
     return setInterval(() => {
@@ -288,10 +213,7 @@ Forever yours — always. 💞
       balloon.style.transform = `scale(${0.9 + Math.random() * 0.4})`;
 
       document.body.appendChild(balloon);
-
-      setTimeout(() => {
-        if (balloon.parentNode) balloon.remove();
-      }, 9000);
+      setTimeout(() => balloon.remove(), 9000);
     }, frequency);
   }
 
@@ -310,6 +232,3 @@ Forever yours — always. 💞
 
 </body>
 </html>
-
-
-
