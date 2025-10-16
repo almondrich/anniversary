@@ -108,44 +108,16 @@
     0% { transform: translateY(0) scale(1); opacity: 1; }
     100% { transform: translateY(-110vh) scale(1.1); opacity: 0; }
   }
-
-  .music-controls {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    width: 55px;
-    height: 55px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    cursor: pointer;
-  }
-
-  .music-controls i {
-    font-size: 1.6rem;
-    color: #d15d7b;
-  }
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
 <div class="message-container">
   <h1>💌 TO MY ONLY BAL 💌</h1>
   <div id="message"></div>
- 
+  <button id="replayBtn">Replay</button>
   <a target="_blank" class="fcc-btn" id="nextBtn" href="PIC3.html">CLICK NEXT</a>
 </div>
-
-<div class="music-controls" id="musicToggle">
-  <i class="fas fa-volume-up"></i>
-</div>
-
-<audio id="bgMusic" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_845f050c9f.mp3?filename=romantic-piano-loop-112191.mp3" loop></audio>
 
 <script>
   const text = `Happy Anniversary, Bal ko! ❤️
@@ -161,10 +133,7 @@ Forever yours — always. 💞
   const messageEl = document.getElementById("message");
   const replayBtn = document.getElementById("replayBtn");
   const nextBtn = document.getElementById("nextBtn");
-  const music = document.getElementById("bgMusic");
-  const musicToggle = document.getElementById("musicToggle");
   let index = 0;
-  let isMusicPlaying = true;
   let balloonInterval;
 
   function typeMessage() {
@@ -175,7 +144,7 @@ Forever yours — always. 💞
       setTimeout(typeMessage, 55);
     } else {
       replayBtn.style.display = "inline-block";
-      nextBtn.style.display = "inline-block"; // ✅ show next button after typing
+      nextBtn.style.display = "inline-block";
     }
   }
 
@@ -187,17 +156,6 @@ Forever yours — always. 💞
     clearBalloons();
     balloonInterval = createBalloons();
     typeMessage();
-  });
-
-  musicToggle.addEventListener("click", () => {
-    if (isMusicPlaying) {
-      music.pause();
-      musicToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
-    } else {
-      music.play();
-      musicToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
-    }
-    isMusicPlaying = !isMusicPlaying;
   });
 
   function createBalloons() {
@@ -223,8 +181,6 @@ Forever yours — always. 💞
   }
 
   window.onload = () => {
-    music.volume = 0.3;
-    music.play();
     balloonInterval = createBalloons();
     typeMessage();
   };
